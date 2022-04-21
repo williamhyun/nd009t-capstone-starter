@@ -21,13 +21,12 @@ logger.addHandler(logging.StreamHandler(sys.stdout))
 
 def test(model, test_loader, hook):
     model.eval()
-    hook.set_mode(smd.modes.EVAL)
     running_corrects=0
     for (inputs, labels) in test_loader:
         outputs = model(inputs)
         _, preds = torch.max(outputs, 1)
         running_corrects += torch.sum(preds == labels.data).item()
-    total_acc = running_corrects/ len(test_loader.dataset)
+    total_acc = running_corrects / len(test_loader.dataset)
     logger.info(f"Test set: Average accuracy: {100*total_acc}%")
     
 
@@ -36,7 +35,7 @@ def train(model, train_loader, valid_loader, epochs, criterion, optimizer, hook)
     for e in range(epochs):
         print(e)
         model.train()
-        hook.set_mode(smd.modes.TRAIN)
+        # hook.set_mode(smd.modes.TRAIN)
         for (inputs, labels) in train_loader:
             optimizer.zero_grad()
             outputs = model(inputs)
@@ -47,7 +46,7 @@ def train(model, train_loader, valid_loader, epochs, criterion, optimizer, hook)
 
         # validation
         model.eval()
-        hook.set_mode(smd.modes.EVAL)
+        # hook.set_mode(smd.modes.EVAL)
         running_corrects=0
         with torch.no_grad():
             for (inputs, labels) in valid_loader:
@@ -55,7 +54,7 @@ def train(model, train_loader, valid_loader, epochs, criterion, optimizer, hook)
                 loss = criterion(outputs, labels)
                 _, preds = torch.max(outputs, 1)
                 running_corrects += torch.sum(preds == labels.data).item()
-        total_acc = running_corrects/ len(valid_loader.dataset)
+        total_acc = running_corrects / len(valid_loader.dataset)
         logger.info(f"Valid set: Average accuracy: {100*total_acc}%")
         
     return model
@@ -66,7 +65,7 @@ def net():
         param.requires_grad = False   
 
     num_features=model.fc.in_features
-    model.fc = nn.Sequential(nn.Linear(num_features, 133))
+    model.fc = nn.Sequential(nn.Linear(num_features, 5))
     return model
 
 def create_data_loaders(data, batch_size, test_batch_size):
@@ -103,8 +102,9 @@ def main(args):
     loss_criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.fc.parameters(), lr=args.lr)
     
-    hook = smd.Hook.create_from_json_file()
-    hook.register_hook(model)
+    # hook = smd.Hook.create_from_json_file()
+    # hook.register_hook(model)
+    hook = None
 
     train_loader, valid_loader, test_loader = create_data_loaders(args.data, args.batch_size, args.test_batch_size)
     
