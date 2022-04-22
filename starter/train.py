@@ -60,7 +60,7 @@ def train(model, train_loader, valid_loader, epochs, criterion, optimizer, hook)
     return model
 
 def net():
-    model = models.resnet18(pretrained=True)
+    model = models.efficientnet_b0(pretrained=True)
     for param in model.parameters():
         param.requires_grad = False   
 
