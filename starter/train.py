@@ -64,8 +64,7 @@ def net():
     for param in model.parameters():
         param.requires_grad = False   
 
-    num_features=model.fc.in_features
-    model.fc = nn.Sequential(nn.Linear(num_features, 5))
+    model.classifier = nn.Sequential(nn.Dropout(p=0.2, inplace=True), nn.Linear(1280, 5))
     return model
 
 def create_data_loaders(data, batch_size, test_batch_size):
@@ -100,7 +99,7 @@ def main(args):
     model=net()
     model=model.to(device)
     loss_criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.fc.parameters(), lr=args.lr)
+    optimizer = optim.Adam(model.classifier.parameters(), lr=args.lr)
     
     # hook = smd.Hook.create_from_json_file()
     # hook.register_hook(model)
