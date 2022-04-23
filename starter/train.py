@@ -1,4 +1,5 @@
 import numpy as np
+import timm
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -61,11 +62,11 @@ def train(model, train_loader, valid_loader, epochs, criterion, optimizer, hook)
     return model
 
 def net():
-    model = models.efficientnet_b5(pretrained=True)
+    model = timm.create_model('efficientnet_b4', pretrained=True)
     for param in model.parameters():
         param.requires_grad = False   
 
-    model.classifier = nn.Sequential(nn.Dropout(p=0.4, inplace=True), nn.Linear(2048, 5))
+    model.classifier = nn.Linear(1792, 5)
     return model
 
 def create_data_loaders(data, batch_size, test_batch_size):
