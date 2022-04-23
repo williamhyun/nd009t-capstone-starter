@@ -66,7 +66,7 @@ def net():
     for param in model.parameters():
         param.requires_grad = False   
 
-    model.classifier = nn.Linear(1792, 5)
+    model.classifier = nn.Linear(1792, 13)
     return model
 
 def create_data_loaders(data, batch_size, test_batch_size):
