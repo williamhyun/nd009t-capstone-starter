@@ -9,6 +9,7 @@ import os
 import sys
 import logging
 import argparse
+from tqdm import tqdm
 from PIL import ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
@@ -36,7 +37,7 @@ def train(model, train_loader, valid_loader, epochs, criterion, optimizer, hook)
         print(e)
         model.train()
         # hook.set_mode(smd.modes.TRAIN)
-        for (inputs, labels) in train_loader:
+        for (inputs, labels) in tqdm(train_loader):
             optimizer.zero_grad()
             outputs = model(inputs)
             loss = criterion(outputs, labels)
@@ -60,11 +61,11 @@ def train(model, train_loader, valid_loader, epochs, criterion, optimizer, hook)
     return model
 
 def net():
-    model = models.efficientnet_b0(pretrained=True)
+    model = models.efficientnet_b5(pretrained=True)
     for param in model.parameters():
         param.requires_grad = False   
 
-    model.classifier = nn.Sequential(nn.Dropout(p=0.2, inplace=True), nn.Linear(1280, 5))
+    model.classifier = nn.Sequential(nn.Dropout(p=0.4, inplace=True), nn.Linear(2048, 5))
     return model
 
 def create_data_loaders(data, batch_size, test_batch_size):
@@ -155,3 +156,4 @@ if __name__=='__main__':
     logging.info(f"Epochs: {args.epochs}")
     
     main(args)
+
