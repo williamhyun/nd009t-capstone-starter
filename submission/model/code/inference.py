@@ -27,7 +27,7 @@ def model_fn(model_dir):
     model.classifier = layer
 
     with open('/opt/ml/model/model.pth', 'rb') as f:
-        model.load_state_dict(torch.load(f))
+        model.load_state_dict(torch.load(f, map_location=torch.device('cpu')))
     model.eval()
     return model
 
