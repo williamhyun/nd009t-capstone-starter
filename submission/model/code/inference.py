@@ -25,8 +25,8 @@ def model_fn(model_dir):
         nn.Dropout(p=0.5, inplace=True),
         nn.Linear(512, 7, bias=False))
     model.classifier = layer
-    
-    with open('/opt/ml/model/model/model.pth', 'rb') as f:
+
+    with open('/opt/ml/model/model.pth', 'rb') as f:
         model.load_state_dict(torch.load(f))
     model.eval()
     return model
